@@ -12,8 +12,8 @@ function App() {
  <Router>
 
         <Switch>
-          <Route path="/product/create" component={createCategory}></Route>
-      
+          <Route path="/category/create" component={createCategory}></Route>
+          <Route path="/product/create" component={createProduct}></Route>
         </Switch>
  
       </Router>

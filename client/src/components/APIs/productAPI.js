@@ -1,37 +1,23 @@
-import { useState, useEffect } from "react";
+/* eslint-disable no-unused-vars */
 import axios from "axios";
+import qs from "qs";
 
-function ProductsAPI() {
-  const [products, setProducts] = useState([]);
-  const [callback, setCallback] = useState(false);
-  const [category, setCategory] = useState("");
-  const [sort, setSort] = useState("");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [result, setResult] = useState(0);
+const baseUrl = "http://localhost:5000/api/v1";
+const axiosInstance = axios.create({
+  baseURL: baseUrl,
+  timeout: 5000,
+});
 
-  useEffect(() => {
-    const getProducts = async () => {
-      const res = await axios.get(
-        `/api/products?limit=${
-          page * 9
-        }&${category}&${sort}&title[regex]=${search}`
-      );
-      setProducts(res.data.products);
-      setResult(res.data.result);
-    };
-    getProducts();
-  }, [callback, category, sort, search, page]);
-
-  return {
-    products: [products, setProducts],
-    callback: [callback, setCallback],
-    category: [category, setCategory],
-    sort: [sort, setSort],
-    search: [search, setSearch],
-    page: [page, setPage],
-    result: [result, setResult],
-  };
-}
+const ProductsAPI = {
+  createProduct: (product, images) => {
+    return axiosInstance.post(
+      "/products/create",
+      qs.stringify({
+        product: product,
+        images: images,
+      })
+    );
+  },
+};
 
 export default ProductsAPI;

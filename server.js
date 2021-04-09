@@ -7,6 +7,9 @@ const methodOverride = require("method-override");
 const app = express();
 const port = process.env.PORT;
 
+const fileUpload = require('express-fileupload')
+const cookieParser = require('cookie-parser')
+
 ///////////////////////
 //     middleware    //
 ///////////////////////
@@ -32,6 +35,11 @@ app.use(
 );
 app.options("*", cors());
 
+app.use(fileUpload({
+  useTempFiles: true
+}))
+
+app.use(cookieParser())
 ///////////////////////
 //     controller    //
 ///////////////////////
