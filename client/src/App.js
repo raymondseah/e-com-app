@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css';
 import createProduct from './components/Pages/createProduct'
 import createCategory from './components/Pages/createCategory'
-
+import allProducts from './components/Pages/allProductPage'
 
 function App() {
   return (
@@ -13,7 +13,8 @@ function App() {
 
         <Switch>
           <Route path="/category/create" component={createCategory}></Route>
-          <Route path="/product/create" component={createProduct}></Route>
+          <Route path="/products/create" component={createProduct}></Route>
+          <Route path="/products" component={allProducts}></Route>
         </Switch>
  
       </Router>
