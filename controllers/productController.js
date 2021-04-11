@@ -7,25 +7,20 @@ class APIfeatures {
   }
   filtering() {
     const queryObj = { ...this.queryString }; //queryString = req.query
-
     const excludedFields = ["page", "sort", "limit"];
     excludedFields.forEach((el) => delete queryObj[el]);
-
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(
       /\b(gte|gt|lt|lte|regex)\b/g,
       (match) => "$" + match
     );
-
     //    gte = greater than or equal
     //    lte = lesser than or equal
     //    lt = lesser than
     //    gt = greater than
     this.query.find(JSON.parse(queryStr));
-
     return this;
   }
-
   sorting() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
@@ -36,7 +31,6 @@ class APIfeatures {
 
     return this;
   }
-
   paginating() {
     const page = this.queryString.page * 1 || 1;
     const limit = this.queryString.limit * 1 || 9;
@@ -65,7 +59,7 @@ const productControllers = {
           price: req.body.product.price,
           description: req.body.product.description,
           content: req.body.product.content,
-          images: req.body.images.url,
+          images: req.body.images,
           category: req.body.product.category,
         })
           .then((createProductResult) => {
@@ -106,6 +100,65 @@ const productControllers = {
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
+  },
+  deleteProductById: async (req, res) => {
+    ProductModel.findOne({
+      _id: req.params.id,
+    })
+      .then((result) => {
+        ProductModel.deleteOne({
+          _id: req.params.id,
+        })
+          .then((deleteResult) => {
+            res.status(400);
+            res.json({
+              msg: "Deleted Item",
+            });
+          })
+          .catch((err) => {
+            res.statueCode = 409;
+            res.json({
+              msg: "unable to delete due to unexpected error",
+            });
+          });
+      })
+      .catch((err) => {
+        res.statusCode = 500;
+        res.json(err);
+      });
+  },
+  updateProductById: async (req, res) => {
+    ProductModel.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        title: req.body.product.title,
+        price: req.body.product.price,
+        description: req.body.product.description,
+        content: req.body.product.content,
+        images: req.body.images,
+        category: req.body.product.category,
+      }
+    )
+      .then((result) => {
+        res.json({ msg: result });
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  },
+  getProductById: async (req, res) => {
+    ProductModel.findOne({
+      _id: req.params.id,
+    })
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        res.statueCode = 409;
+        res.json({
+          msg: "unable to find due to unexpected error",
+        });
+      });
   },
 };
 

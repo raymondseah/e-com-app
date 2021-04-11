@@ -77,6 +77,12 @@ app.post("/api/v1/users/refresh_token", userControllers.refreshToken);
 app.post("/api/v1/products/create", productControllers.createProduct);
 // product get
 app.get("/api/v1/products", productControllers.getAllProducts);
+// product get by id
+app.get("/api/v1/products/:id", productControllers.getProductById);
+// product delete
+app.delete("/api/v1/products/delete/:id",productControllers.deleteProductById)
+// update product
+app.put("/api/v1/products/update/:id", productControllers.updateProductById)
 
 ///////////////////////
 // image Controller////

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React, { useState, useEffect } from "react";
@@ -19,7 +18,7 @@ const initialState = {
   _id: "",
 };
 
-function CreateProduct() {
+function EditProduct() {
   const [product, setProduct] = useState(initialState);
   const [categories, setCategories] = useState([]);
   const [images, setImages] = useState(false);
@@ -29,29 +28,31 @@ function CreateProduct() {
   const history = useHistory();
   const param = useParams();
 
-  const [products, setProducts] = useState("");
+  const [products, setProducts] = useState([]);
   const [onEdit, setOnEdit] = useState(false);
   const [callback, setCallback] = useState(false);
 
   useEffect(() => {
     getCategories();
-
     if (param.id) {
       setOnEdit(true);
-      getProductsByID();
-
+      getProducts();
+      products.forEach((product) => {
+        if (product._id === param.id) {
+          setProduct(product);
+          setImages(product.images);
+        }
+      });
     } else {
       setOnEdit(false);
       setProduct(initialState);
       setImages(false);
     }
-  }, []);
+  }, [param.id, products]);
 
-  const getProductsByID = async (id) => {
-    const res = await productAPI.getProductsById(param.id);
-    setProduct(res.data);
-    setImages(res.data.images);
-
+  const getProducts = async () => {
+    const res = await axios.get("http://localhost:5000/api/v1/products");
+    setProducts(res.data.products);
   };
   const getCategories = async () => {
     const res = await categoryAPI.getAllCategory();
@@ -85,7 +86,6 @@ function CreateProduct() {
       );
       setLoading(false);
       setImages(res.data);
-
     } catch (err) {
       alert(err.response.data.msg);
       console.log(err);
@@ -114,6 +114,7 @@ function CreateProduct() {
   };
 
   const handleChangeInput = (e) => {
+    //set name to the input value
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   };
@@ -123,10 +124,9 @@ function CreateProduct() {
     try {
       // if(!isAdmin) return alert("You're not an admin")
       if (!images) return alert("No Image Upload");
+
       if (onEdit) {
-        console.log('try update')
-        console.log(images)
-        await productAPI.updateProductById(param.id, product, images);
+        await productAPI.updateProductById(product._id, product, images);
       } else {
         await productAPI.createProduct(product, images);
       }
@@ -135,7 +135,7 @@ function CreateProduct() {
       //   history.push("/");
     } catch (err) {
       console.log(err);
-      alert(err);
+      alert(err.response.data.msg);
     }
   };
 
@@ -165,6 +165,7 @@ function CreateProduct() {
             type="text"
             name="product_id"
             id="product_id"
+            required
             value={product.product_id}
             onChange={handleChangeInput}
             disabled={onEdit}
@@ -177,6 +178,7 @@ function CreateProduct() {
             type="text"
             name="title"
             id="title"
+            required
             value={product.title}
             onChange={handleChangeInput}
           />
@@ -188,6 +190,7 @@ function CreateProduct() {
             type="number"
             name="price"
             id="price"
+            required
             value={product.price}
             onChange={handleChangeInput}
           />
@@ -199,6 +202,7 @@ function CreateProduct() {
             type="text"
             name="description"
             id="description"
+            required
             value={product.description}
             rows="5"
             onChange={handleChangeInput}
@@ -211,6 +215,7 @@ function CreateProduct() {
             type="text"
             name="content"
             id="content"
+            required
             value={product.content}
             rows="7"
             onChange={handleChangeInput}
@@ -239,4 +244,4 @@ function CreateProduct() {
   );
 }
 
-export default CreateProduct;
+export default EditProduct;

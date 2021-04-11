@@ -22,6 +22,18 @@ const ProductsAPI = {
   deleteProductById: (id) => {
     return axiosInstance.delete(`products/delete/${id}`);
   },
+  updateProductById: (id, product, images) => {
+    return axiosInstance.put(
+      `products/update/${id}`,
+      qs.stringify({
+        product: product,
+        images: images,
+      })
+    );
+  },
+  getProductsById: (id) => {
+    return axiosInstance.get(`products/${id}`);
+  },
 };
 
 export default ProductsAPI;
