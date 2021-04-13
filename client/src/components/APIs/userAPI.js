@@ -1,63 +1,39 @@
-import {useState, useEffect} from 'react'
-import axios from 'axios'
+/* eslint-disable no-unused-vars */
+import axios from "axios";
+import qs from "qs";
 
-function UserAPI(token) {
-    const [isLogged, setIsLogged] = useState(false)
-    const [isAdmin, setIsAdmin] = useState(false)
-    const [cart, setCart] = useState([])
-    const [history, setHistory] = useState([])
+import { useState, useEffect } from "react";
 
-    useEffect(() =>{
-        if(token){
-            const getUser = async () =>{
-                try {
-                    const res = await axios.get('/user/infor', {
-                        headers: {Authorization: token}
-                    })
+const baseUrl = "http://localhost:5000/api/v1";
+const axiosInstance = axios.create({
+  baseURL: baseUrl,
+  timeout: 5000,
+});
+const UsersAPI = {
+  registerUser: (user) => {
+    return axiosInstance.post(
+      "/users/register",
+      qs.stringify({
+        user: user,
+      })
+    );
+  },
+  loginUser: (user) => {
+    return axiosInstance.post(
+      "/users/login",
+      qs.stringify({
+        user: user,
+      })
+    );
+  },
+  addCart: (product) => {
+    return axiosInstance.patch(
+      "/addchart",
+      qs.stringify({
+        product: product,
+      })
+    );
+  },
+};
 
-                    setIsLogged(true)
-                    res.data.role === 1 ? setIsAdmin(true) : setIsAdmin(false)
-
-                    setCart(res.data.cart)
-
-                } catch (err) {
-                    alert(err.response.data.msg)
-                }
-            }
-
-            getUser()
-            
-        }
-    },[token])
-
-    
-
-    const addCart = async (product) => {
-        if(!isLogged) return alert("Please login to continue buying")
-
-        const check = cart.every(item =>{
-            return item._id !== product._id
-        })
-
-        if(check){
-            setCart([...cart, {...product, quantity: 1}])
-
-            await axios.patch('/user/addcart', {cart: [...cart, {...product, quantity: 1}]}, {
-                headers: {Authorization: token}
-            })
-
-        }else{
-            alert("This product has been added to cart.")
-        }
-    }
-
-    return {
-        isLogged: [isLogged, setIsLogged],
-        isAdmin: [isAdmin, setIsAdmin],
-        cart: [cart, setCart],
-        addCart: addCart,
-        history: [history, setHistory]
-    }
-}
-
-export default UserAPI
+export default UsersAPI;

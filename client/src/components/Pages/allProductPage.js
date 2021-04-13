@@ -20,7 +20,7 @@ function Products() {
   const [page, setPage] = useState(1);
   const [result, setResult] = useState(0);
 
-  const [isAdmin] = useState(true);
+  const [isAdmin] = useState(false);
 
   useEffect(() => {
     const getProducts = async () => {

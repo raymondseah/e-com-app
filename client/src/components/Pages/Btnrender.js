@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 function BtnRender({ product, deleteProduct }) {
-  const [isAdmin] = useState(true);
+  const [isAdmin] = useState(false);
   const addCart = useState("");
 
   return (
