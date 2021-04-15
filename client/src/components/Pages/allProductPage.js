@@ -7,6 +7,7 @@ import productAPI from "./../APIs/productAPI";
 import BtnRender from "./Btnrender";
 import { Link } from "react-router-dom";
 import qs from "qs";
+import "./allProductPage.css";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -94,68 +95,71 @@ function Products() {
       </div>
     );
   return (
-    <div className="">
-      <div className="row">
-        <span>Filters: </span>
-        <select name="category" value={category} onChange={handleCategory}>
-          <option value="">All Products</option>
-          {categories.map((category) => (
-            <option value={"category=" + category._id} key={category._id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div id="home_product_page" className="container">
+      <div id="product_list_container">
+        <div className="filter_menu">
+          <div className="row">
+            <span>Filters: </span>
+            <select name="category" value={category} onChange={handleCategory}>
+              <option value="">All Products</option>
+              {categories.map((category) => (
+                <option value={"category=" + category._id} key={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <input
+            type="text"
+            value={search}
+            placeholder="Enter your search!"
+            onChange={(e) => setSearch(e.target.value.toLowerCase())}
+          />
 
-      <input
-        type="text"
-        value={search}
-        placeholder="Enter your search!"
-        onChange={(e) => setSearch(e.target.value.toLowerCase())}
-      />
-
-      <div className="row sort">
-        <span>Sort By: </span>
-        <select value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option value="">Newest</option>
-          <option value="sort=oldest">Oldest</option>
-          <option value="sort=-sold">Best sales</option>
-          <option value="sort=-price">Price: Hight-Low</option>
-          <option value="sort=price">Price: Low-Hight</option>
-        </select>
-      </div>
-      <h1>test</h1>
-      {isAdmin && (
-        <div className="delete-all">
-          <span>Select all</span>
-          <input type="checkbox" checked={isCheck} onChange={checkAll} />
-          <button onClick={deleteAll}>Delete ALL</button>
+          <div className="row sort">
+            <span>Sort By: </span>
+            <select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="">Newest</option>
+              <option value="sort=oldest">Oldest</option>
+              <option value="sort=-sold">Best sales</option>
+              <option value="sort=-price">Price: Hight-Low</option>
+              <option value="sort=price">Price: Low-Hight</option>
+            </select>
+          </div>
         </div>
-      )}
 
-      <div className="products">
-        {products.map((product) => {
-          return (
-            <div className="product_card">
-              {isAdmin && (
-                <input
-                  type="checkbox"
-                  checked={product.checked}
-                  onChange={() => handleCheck(product._id)}
-                />
-              )}
-              <img src={product.images.url} alt="" />
+        {isAdmin && (
+          <div className="delete-all">
+            <span>Select all</span>
+            <input type="checkbox" checked={isCheck} onChange={checkAll} />
+            <button onClick={deleteAll}>Delete ALL</button>
+          </div>
+        )}
 
-              <div className="product_box">
-                <h2 title={product.title}>{product.title}</h2>
-                <span>${product.price}</span>
-                <p>{product.description}</p>
+        <div className="products">
+          {products.map((product) => {
+            return (
+              <div className="product_card">
+                {isAdmin && (
+                  <input
+                    type="checkbox"
+                    checked={product.checked}
+                    onChange={() => handleCheck(product._id)}
+                  />
+                )}
+                <img src={product.images.url} alt="" />
+
+                <div className="product_box">
+                  <h2 title={product.title}>{product.title}</h2>
+                  <span>${product.price}</span>
+                  <p>{product.description}</p>
+                </div>
+
+                <BtnRender product={product} deleteProduct={deleteProduct} />
               </div>
-
-              <BtnRender product={product} deleteProduct={deleteProduct} />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

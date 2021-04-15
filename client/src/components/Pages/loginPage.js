@@ -5,6 +5,7 @@ import UserAPI from "../APIs/userAPI";
 import { withCookies ,Cookies } from "react-cookie";
 import { withRouter, Link } from "react-router-dom";
 import moment from "moment";
+import './loginPage.css'
 
 function Login() {
   const [user, setUser] = useState({
@@ -36,7 +37,8 @@ function Login() {
   };
 
   return (
-    <div className="login-page">
+    <div id="login-page" className="container">
+      <div id="login-container">
       <form onSubmit={loginSubmit}>
         <h2>Login</h2>
         <input
@@ -58,11 +60,12 @@ function Login() {
           onChange={onChangeInput}
         />
 
-        <div className="row">
-          <button type="submit">Login</button>
-          <Link to="/register">Register</Link>
+        <div className="">
+          <button class="btn btn-success" type="submit">Login</button>
+          <Link class="btn btn-primary" to="/register">Register</Link>
         </div>
       </form>
+      </div>
     </div>
   );
 }

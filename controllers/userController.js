@@ -8,7 +8,7 @@ const userControllers = {
   register: (req, res) => {
     UserModel.findOne({
       where: {
-        email: req.body.email,
+        email: req.body.user.email,
       },
     })
       .then((result) => {
@@ -16,17 +16,17 @@ const userControllers = {
           res.statusCode = 400;
           res.json({
             success: false,
-            message: "Email has already been taken",
+            msg: "Email has already been taken",
           });
           return;
         }
         const salt = uuid.v4();
-        const combination = salt + req.body.password;
+        const combination = salt + req.body.user.password;
         const hash = SHA256(combination).toString();
 
         UserModel.create({
-          username: req.body.username,
-          email: req.body.email,
+          username: req.body.user.name,
+          email: req.body.user.email,
           pwsalt: salt,
           hash: hash,
         })
@@ -34,14 +34,14 @@ const userControllers = {
             res.statueCode = 201;
             res.json({
               success: true,
-              message: "registration is successful",
+              msg: "registration is successful",
             });
           })
           .catch((err) => {
             res.statueCode = 409;
             res.json({
               success: false,
-              message: "unable to register due to unexpected error",
+              msg: err,
             });
           });
       })
@@ -49,16 +49,15 @@ const userControllers = {
         res.statueCode = 409;
         res.json({
           success: false,
-          message: "The register email is exist",
+          msg: "The register email is exist",
         });
       });
   },
   login: (req, res) => {
     // validate input here on your own
-    console.log(req.body.email);
     // gets user with the given email
     UserModel.findOne({
-      email: req.body.email,
+      email: req.body.user.email,
     })
       .then((result) => {
         console.log(result);
@@ -67,20 +66,20 @@ const userControllers = {
           res.statusCode = 401;
           res.json({
             success: false,
-            message: "Either username or password is wrong , no account",
+            msg: "Either username or password is wrong , no account",
           });
           return;
         }
 
         // combine DB user salt with given password, and apply hash algo
-        const hash = SHA256(result.pwsalt + req.body.password).toString();
+        const hash = SHA256(result.pwsalt + req.body.user.password).toString();
         console.log(hash);
         // check if password is correct by comparing hashes
         if (hash !== result.hash) {
           res.statusCode = 401;
           res.json({
             success: false,
-            message: "Either username or password is wrong,yoyo",
+            msg: "Either username or password is wrong,yoyo",
             test: hash,
           });
           return;
@@ -90,6 +89,7 @@ const userControllers = {
         const token = jwt.sign(
           {
             email: result.email,
+            id: result._id,
           },
           process.env.JWT_SECRET,
           {
@@ -106,13 +106,14 @@ const userControllers = {
           success: true,
           token: token,
           expiresAt: rawJWT.exp,
+          msg: "logged in",
         });
       })
       .catch((err) => {
         res.statusCode = 500;
         res.json({
           success: false,
-          message: "Unable to login due to unexpected error",
+          msg: "Unable to login due to unexpected error",
         });
       });
   },
@@ -124,24 +125,38 @@ const userControllers = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  refreshToken: (req, res) => {
+  addcart: async (req, res) => {
+    let id = res.locals.jwtData.id
     try {
-      const rf_token = req.cookies.refreshtoken;
-      if (!rf_token)
-        return res.status(400).json({ msg: "Please Login or Register" });
+      const user = await UserModel.findOne({ _id: id });
+      console.log(user)
+      
+      if (!user) return res.status(400).json({ msg: "User does not exist." });
 
-      jwt.verify(rf_token, process.env.JWT_SECRET, (err, user) => {
-        if (err)
-          return res.status(400).json({ msg: "Please Login or Register" });
+      await UserModel.findOneAndUpdate(
+        { _id: id },
+        {
+          cart: req.body.cart,
+        }
+      );
 
-        const accesstoken = createAccessToken({ id: user.id });
-
-        res.json({ accesstoken });
-      });
+      return res.json({ msg: "Added to cart" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getUserInfo: async (req,res) => {
+    let id = res.locals.jwtData.id
+    try {
+      const user = await UserModel.findById(id)
+      if(!user) return res.status(400).json({msg: "User does not exist."})
+
+      res.json(user)
+  } catch (err) {
+      return res.status(500).json({msg: err.message})
+  }
+
+  }
 };
 
 module.exports = userControllers;
