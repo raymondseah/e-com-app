@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { withRouter, Link, useParams } from "react-router-dom";
 import userAPI from "./../APIs/userAPI";
 import { withCookies } from "react-cookie";
@@ -9,7 +9,11 @@ import qs from "qs";
 function BtnRender({ product, deleteProduct }) {
   const [isAdmin] = useState(false);
   const [cart, setCart] = useState([]);
-  const params = useParams();
+    const params = useParams();
+
+  useEffect(() => {
+    currentCart()
+  })
 
   const readCookie = (name) => {
     var nameEQ = name + "=";
@@ -22,9 +26,25 @@ function BtnRender({ product, deleteProduct }) {
     return null;
   };
 
+  const currentCart = async () => {
+    const token = readCookie("token");
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/v1/users/infor",
+        {
+          headers: { auth_token: token },
+        }
+      );
+      // res.data.role === 1 ? setIsAdmin(true) : setIsAdmin(false);
+      setCart(res.data.cart);
+    } catch (err) {
+      alert(err);
+    }
+  }
+
   const addCart = async (product) => {
     const token = readCookie("token");
-    console.log(token);
+
 
     const check = cart.every((item) => {
       return item._id !== product._id;

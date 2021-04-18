@@ -8,6 +8,7 @@ import { useHistory, useParams } from "react-router-dom";
 import categoryAPI from "./../APIs/catergoryAPI";
 import productAPI from "./../APIs/productAPI";
 import qs from "qs";
+import "./createProduct.css";
 
 const initialState = {
   product_id: "",
@@ -39,7 +40,6 @@ function CreateProduct() {
     if (param.id) {
       setOnEdit(true);
       getProductsByID();
-
     } else {
       setOnEdit(false);
       setProduct(initialState);
@@ -51,7 +51,6 @@ function CreateProduct() {
     const res = await productAPI.getProductsById(param.id);
     setProduct(res.data);
     setImages(res.data.images);
-
   };
   const getCategories = async () => {
     const res = await categoryAPI.getAllCategory();
@@ -85,7 +84,6 @@ function CreateProduct() {
       );
       setLoading(false);
       setImages(res.data);
-
     } catch (err) {
       alert(err.response.data.msg);
       console.log(err);
@@ -124,8 +122,8 @@ function CreateProduct() {
       // if(!isAdmin) return alert("You're not an admin")
       if (!images) return alert("No Image Upload");
       if (onEdit) {
-        console.log('try update')
-        console.log(images)
+        console.log("try update");
+        console.log(images);
         await productAPI.updateProductById(param.id, product, images);
       } else {
         await productAPI.createProduct(product, images);
@@ -143,98 +141,100 @@ function CreateProduct() {
     display: images ? "block" : "none",
   };
   return (
-    <div className="create_product">
-      <div className="upload">
-        <input type="file" name="file" id="file_up" onChange={handleUpload} />
-        {loading ? (
-          <div id="file_img">
-            <Loading />
+    <div id="create_product" className="create_product container">
+      <div id="create_product_container">
+        <div className="upload">
+          <input type="file" name="file" id="file_up" onChange={handleUpload} />
+          {loading ? (
+            <div id="file_img">
+              <Loading />
+            </div>
+          ) : (
+            <div id="file_img" style={styleUpload}>
+              <img src={images ? images.url : ""} alt="" />
+              <span onClick={handleDestroy}>X</span>
+            </div>
+          )}
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="row">
+            <label htmlFor="product_id">Product ID</label>
+            <input
+              type="text"
+              name="product_id"
+              id="product_id"
+              value={product.product_id}
+              onChange={handleChangeInput}
+              disabled={onEdit}
+            />
           </div>
-        ) : (
-          <div id="file_img" style={styleUpload}>
-            <img src={images ? images.url : ""} alt="" />
-            <span onClick={handleDestroy}>X</span>
+
+          <div className="row">
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              value={product.title}
+              onChange={handleChangeInput}
+            />
           </div>
-        )}
+
+          <div className="row">
+            <label htmlFor="price">Price</label>
+            <input
+              type="number"
+              name="price"
+              id="price"
+              value={product.price}
+              onChange={handleChangeInput}
+            />
+          </div>
+
+          <div className="row">
+            <label htmlFor="description">Description</label>
+            <textarea
+              type="text"
+              name="description"
+              id="description"
+              value={product.description}
+              rows="5"
+              onChange={handleChangeInput}
+            />
+          </div>
+
+          <div className="row">
+            <label htmlFor="content">Content</label>
+            <textarea
+              type="text"
+              name="content"
+              id="content"
+              value={product.content}
+              rows="7"
+              onChange={handleChangeInput}
+            />
+          </div>
+
+          <div className="row">
+            <label htmlFor="categories">Categories: </label>
+            <select
+              name="category"
+              value={product.category}
+              onChange={handleChangeInput}
+            >
+              <option value="">Please select a category</option>
+              {categories.map((category) => (
+                <option value={category._id} key={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button type="submit">{onEdit ? "Update" : "Create"}</button>
+        </form>
       </div>
-
-      <form onSubmit={handleSubmit}>
-        <div className="row">
-          <label htmlFor="product_id">Product ID</label>
-          <input
-            type="text"
-            name="product_id"
-            id="product_id"
-            value={product.product_id}
-            onChange={handleChangeInput}
-            disabled={onEdit}
-          />
-        </div>
-
-        <div className="row">
-          <label htmlFor="title">Title</label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            value={product.title}
-            onChange={handleChangeInput}
-          />
-        </div>
-
-        <div className="row">
-          <label htmlFor="price">Price</label>
-          <input
-            type="number"
-            name="price"
-            id="price"
-            value={product.price}
-            onChange={handleChangeInput}
-          />
-        </div>
-
-        <div className="row">
-          <label htmlFor="description">Description</label>
-          <textarea
-            type="text"
-            name="description"
-            id="description"
-            value={product.description}
-            rows="5"
-            onChange={handleChangeInput}
-          />
-        </div>
-
-        <div className="row">
-          <label htmlFor="content">Content</label>
-          <textarea
-            type="text"
-            name="content"
-            id="content"
-            value={product.content}
-            rows="7"
-            onChange={handleChangeInput}
-          />
-        </div>
-
-        <div className="row">
-          <label htmlFor="categories">Categories: </label>
-          <select
-            name="category"
-            value={product.category}
-            onChange={handleChangeInput}
-          >
-            <option value="">Please select a category</option>
-            {categories.map((category) => (
-              <option value={category._id} key={category._id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button type="submit">{onEdit ? "Update" : "Create"}</button>
-      </form>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import categoryAPI from "./../APIs/catergoryAPI";
 import axios from "axios";
+import "./createCategory.css";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -57,40 +58,42 @@ function Categories() {
   };
 
   return (
-    <div className="categories">
-      <form
-        onSubmit={(e) => {
-          createCategory(e);
-        }}
-      >
-        <label htmlFor="category">Category</label>
-        <input
-          type="text"
-          name="category"
-          value={category}
-          required
-          onChange={(e) => setCategory(e.target.value)}
-        />
+    <div id="categories_page" className="categories container">
+      <div id="categories_container">
+        <form
+          onSubmit={(e) => {
+            createCategory(e);
+          }}
+        >
+          <label htmlFor="category">Category</label>
+          <input
+            type="text"
+            name="category"
+            value={category}
+            required
+            onChange={(e) => setCategory(e.target.value)}
+          />
 
-        <button type="submit">{onEdit ? "Update" : "Create"}</button>
-      </form>
+          <button type="submit">{onEdit ? "Update" : "Create"}</button>
+        </form>
 
-      <div className="col">
-        {categories.map((category) => (
-          <div className="row" key={category._id}>
-            <p>{category.name}</p>
-            <div>
-              <button
-                onClick={(e) => editCategory(category._id, category.name)}
-              >
-                Edit
-              </button>
-              <button onClick={(e) => deleteCategory(category._id)}>
-                Delete
-              </button>
+        <div className="col">
+          {categories.map((category) => (
+            <div className="row" key={category._id}>
+              <p>{category.name}</p>
+              <div>
+                <button
+                  onClick={(e) => editCategory(category._id, category.name)}
+                >
+                  Edit
+                </button>
+                <button onClick={(e) => deleteCategory(category._id)}>
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -26,14 +26,14 @@ const UsersAPI = {
       })
     );
   },
-  addCart: (product) => {
-    return axiosInstance.patch(
-      "/addchart",
-      qs.stringify({
-        product: product,
-      })
-    );
-  },
+  // addCart: (product) => {
+  //   return axiosInstance.patch(
+  //     "/addchart",
+  //     qs.stringify({
+  //       product: product,
+  //     })
+  //   );
+  // },
 };
 
 export default UsersAPI;
