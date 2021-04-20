@@ -141,31 +141,29 @@ function Cart() {
       </div>
     );
   return (
-    <div id="cart_page">
+    <div id="cart" className="container">
       <div id="product_cart_container">
         {" "}
         {cart.map((product) => (
-          <div className="detail cart" key={product._id}>
-            <img src={product.images.url} alt="" />
-
-            <div className="box-detail">
-              <h2>{product.title}</h2>
-
-              <h3>$ {product.price * product.quantity}</h3>
-              <p>{product.description}</p>
-              <p>{product.content}</p>
-
-              <div className="amount">
-                <button onClick={() => decrement(product._id)}> - </button>
-                <span>{product.quantity}</span>
-                <button onClick={() => increment(product._id)}> + </button>
-              </div>
-
-              <div
-                className="delete"
-                onClick={() => removeProduct(product._id)}
-              >
-                X
+          <div className="detail_cart_section container">
+            <div className="detail cart" key={product._id}>
+              <img src={product.images.url} alt="" />
+              <div className="box-detail">
+                <h2>{product.title}</h2>
+                <h3>$ {product.price * product.quantity}</h3>
+                <p>{product.description}</p>
+                <p>{product.content}</p>
+                <div className="amount">
+                  <button onClick={() => decrement(product._id)}> - </button>
+                  <span>{product.quantity}</span>
+                  <button onClick={() => increment(product._id)}> + </button>
+                </div>
+                <div
+                  className="delete"
+                  onClick={() => removeProduct(product._id)}
+                >
+                  X
+                </div>
               </div>
             </div>
           </div>
